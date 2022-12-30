@@ -22,7 +22,7 @@ import { SaleRevenue } from './cart/entity/SaleRevenue.entity';
     host: 'localhost',
     port: 3306,
     username: 'root',
-    password: '123456789',
+    password: '',
     database: 'db3',
     entities: [User, Product, Category, Blog, OrderItem, SaleRevenue],
     synchronize: true,

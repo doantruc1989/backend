@@ -28,16 +28,16 @@ export class UsersController {
 
     ) { }
 
-    @HasRoles(Role.User)
-    @UseGuards(JwtAuthGuard,
-        RolesGuard)
+    // @HasRoles(Role.User)
+    // @UseGuards(JwtAuthGuard,
+    //     RolesGuard)
     @Get('users/profile/:id')
     async getProfile(@Param('id') id: number) {
         return this.usersService.getUserProfile(id);
     }
 
-    @HasRoles(Role.User)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    // @HasRoles(Role.User)
+    // @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('users/profile/editProfile')
     async editProfile(
         @Userde() { username }: User,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/product/entity/product.entity';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, Between } from 'typeorm';
 import SaveOrderdto from './dto/saveOrder.dto';
 import { CartItem } from './entity/cart.entity';
 import { OrderItem } from './entity/OrderItem';
@@ -141,5 +141,56 @@ export class CartService {
             thisMonthRevenue += revenue[i].revenue;
         };
         return thisMonthRevenue
+    }
+
+    adminChartWeek = async () => {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 1);
+        const lastweek = new Date(start);
+        lastweek.setDate(start.getDate() - 7)
+        const week = await this.orderItemRepository
+            .createQueryBuilder('order')
+            .select("SUM(order.cartTotal)", 'sale')
+            .addSelect("SUM(order.revenue)", 'revenue')
+            .addSelect('DATE_FORMAT(createdAt, "%d %b")', 'date')
+            .groupBy('DATE_FORMAT(createdAt, "%j")')
+            .where(`createdAt BETWEEN '${lastweek.toISOString()}' AND '${end.toISOString()}'`)
+            .getRawMany()
+        return week
+    }
+
+    adminChartMonth = async () => {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 1);
+        const lastMonth = new Date(start);
+        lastMonth.setDate(start.getDate() - 30)
+        const month = await this.orderItemRepository
+            .createQueryBuilder('order')
+            .select("SUM(order.cartTotal)", 'sale')
+            .addSelect("SUM(order.revenue)", 'revenue')
+            .addSelect('DATE_FORMAT(createdAt, "%d %b")', 'date')
+            .groupBy('DATE_FORMAT(createdAt, "%j")')
+            .where(`createdAt BETWEEN '${lastMonth.toISOString()}' AND '${end.toISOString()}'`)
+            .getRawMany()
+        return month
+    }
+
+    adminTotalOrder = async (field: number) => {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 1);
+        const lastMonth = new Date(start);
+        lastMonth.setDate(start.getDate() - field)
+        const order = await this.orderItemRepository
+            .createQueryBuilder('order')
+            .select("COUNT(order.id)")
+            .where(`createdAt BETWEEN '${lastMonth.toISOString()}' AND '${end.toISOString()}'`)
+            .getCount()
+        return order;
     }
 }

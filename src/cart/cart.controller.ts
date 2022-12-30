@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { get } from 'http';
 import { CartService } from './cart.service';
 import SaveCartDto from './dto/saveCart.dto';
 import SaveOrderdto from './dto/saveOrder.dto';
@@ -49,4 +48,20 @@ export class CartController {
     async getRevenueMonth() {
         return this.cartService.adminGetRevenueMonth()
     }
+
+    @Get('admin/chart/week')
+    async getTotalWeek() {
+        return this.cartService.adminChartWeek()
+    }
+
+    @Get('admin/chart/month')
+    async getTotalMonth() {
+        return this.cartService.adminChartMonth()
+    }
+
+    @Get('admin/countorders/:field')
+    async getTotalOrder(@Param('field') field: number) {
+        return this.cartService.adminTotalOrder(field)
+    }
 }
+
