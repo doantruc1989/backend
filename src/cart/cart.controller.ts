@@ -63,5 +63,25 @@ export class CartController {
     async getTotalOrder(@Param('field') field: number) {
         return this.cartService.adminTotalOrder(field)
     }
+
+    @Get('navbar')
+    async getNavbar() {
+        return this.cartService.getClientNavbar()
+    }
+
+    @Get('grabapi')
+    async grab() {
+        return this.cartService.grabApi()
+    }
+
+    @Get('api/provinces')
+    async getProvinces() {
+        return this.cartService.listProvinces()
+    }
+
+    @Get('api/provinces/:name')
+    async getProvincesName(@Param('name') name: string) {
+        return this.cartService.listProvincesName(name)
+    }
 }
 

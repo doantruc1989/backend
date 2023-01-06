@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Body, Request, Get, Param } from '@nestjs/common';
+import { Controller, UseGuards, Post, Body, Request, Get, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import RegisterDto from './dto/register.dto';
@@ -14,13 +14,23 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Request() req) {
-        console.log(req.user)
-        return this.authService.login(req.user);
+        try {
+            await this.authService.login(req.user);
+        } catch (error) {
+            throw new HttpException({ status: 401, }, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @Post('register')
     async register(@Body() registrationData: RegisterDto) {
-        return this.authService.register(registrationData);
+        try {
+            await this.authService.register(registrationData);
+        } catch (error) {
+            throw new HttpException({
+                status: 409,
+            }, HttpStatus.CONFLICT, {
+                cause: error
+            });
+        }
     }
-
 }

@@ -5,6 +5,9 @@ import { Repository, Like, Between } from 'typeorm';
 import SaveOrderdto from './dto/saveOrder.dto';
 import { CartItem } from './entity/cart.entity';
 import { OrderItem } from './entity/OrderItem';
+import { Province } from './entity/Province.entity';
+import { SaleRevenue } from './entity/SaleRevenue.entity';
+import axios from 'axios';
 
 @Injectable()
 export class CartService {
@@ -14,7 +17,11 @@ export class CartService {
         @InjectRepository(OrderItem)
         private orderItemRepository: Repository<OrderItem>,
         @InjectRepository(Product)
-        private productRepository: Repository<Product>
+        private productRepository: Repository<Product>,
+        @InjectRepository(SaleRevenue)
+        private saleRevenueRepository: Repository<SaleRevenue>,
+        @InjectRepository(Province)
+        private provinceRepository: Repository<Province>,
     ) { }
 
     async saveOrder(saveOrderdto: SaveOrderdto) {
@@ -192,5 +199,42 @@ export class CartService {
             .where(`createdAt BETWEEN '${lastMonth.toISOString()}' AND '${end.toISOString()}'`)
             .getCount()
         return order;
+    }
+
+    getClientNavbar = async () => {
+        const navbar = await this.saleRevenueRepository.find()
+        return navbar
+    }
+
+    grabApi = async () => {
+        await axios.get('https://provinces.open-api.vn/api/?depth=2')
+            .then((response) => {
+                const provincesData = response.data;
+                for (let i = 0; i < provincesData.length; i++) {
+                    this.provinceRepository
+                        .createQueryBuilder()
+                        .insert()
+                        .into(Province)
+                        .values({
+                            name: provincesData[i].name,
+                            code: provincesData[i].code,
+                            divisionType: provincesData[i].division_type,
+                            codeName: provincesData[i].codename,
+                            phoneCode: provincesData[i].phone_code,
+                            districts: JSON.stringify(provincesData[i].districts)
+                        })
+                        .execute()
+                }
+            })
+    }
+
+    listProvinces = async () => {
+        const provinces = await this.provinceRepository.find();
+        return provinces;
+    }
+
+    listProvincesName = async (name: string) => {
+        const provinces = await this.provinceRepository.findOneBy({ name })
+        return provinces;
     }
 }

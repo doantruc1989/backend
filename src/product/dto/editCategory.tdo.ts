@@ -1,10 +1,8 @@
-
-
-export class NewCategoryDto {
+export class EditCategoryDto {
     category: string;
     image: string;
     path: string;
     parentId: number;
 }
 
-export default NewCategoryDto;
+export default EditCategoryDto;

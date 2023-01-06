@@ -33,6 +33,9 @@ export class Category {
     @Column('varchar')
     path: string;
 
+    @Column('bigint')
+    parentId: number;
+
     // @Column( 'datetime', { name: 'createdAt' } )
     // createdAt: Date;
 

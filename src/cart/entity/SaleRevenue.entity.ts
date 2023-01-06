@@ -10,9 +10,12 @@ export class SaleRevenue extends SharedProp {
     @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
     id: string;
 
-    @Column('float', { name: 'sale', precision: 12, default: () => "'0'" })
-    sale: number;
+    @Column('varchar')
+    name: string;
 
-    @Column('float', { name: 'revenue', precision: 12, default: () => "'0'" })
-    revenue: number;
+    @Column('varchar')
+    slug: string;
+
+    @Column('varchar')
+    parentId: string;
 }
